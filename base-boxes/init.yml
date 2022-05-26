@@ -1,0 +1,10 @@
+#cloud-config
+users:
+  - name: ryan
+    groups: [ sudo ]
+    shell: /bin/bash
+    ssh_import_id:
+    - gh:greyhoundforty
+final_message: "The system is finally up, after $UPTIME seconds"
+output: {all: '| tee -a /var/log/cloud-init-output.log'}
+
