@@ -1,31 +1,31 @@
 variable "name" {
-  default = "pkr-test"
+  default = ""
 }
 
 variable "base_image" {
-  default = "hashistack-20220526185540"
+  default = ""
 }
 
-variable "tor_lab_vpc" {
-  default = "base-lab-vpc"
+variable "lab_vpc" {
+  default = ""
 }
 
 variable "instance_subnet" {
-  default = "frontend-zone-1-subnet"
+  default = ""
 }
 
 variable "instance_security_group" {
-  default = "base-lab-vpc-frontend-sg"
+  default = ""
 }
 
 variable "resource_group" {
-  default = "2022-cde-lab"
+  default = ""
 }
 
-variable "europa_ssh_key" {
-  default = "europa-ca-tor"
+variable "ssh_key" {
+  default = ""
 }
 
 variable "region" {
-  default = "ca-tor"
+  default = ""
 }
