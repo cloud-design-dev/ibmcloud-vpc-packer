@@ -1,9 +1,6 @@
 # IBM Cloud VPC Packer Examples
 
-## Provider Plugin
-
-- Point to source of provider scripts 
-- Go VPC SDK 
+## Packer Overview
 
 ## Configuration Blocks
 
@@ -22,11 +19,13 @@ packer {
 
 ### Variables
 
+You can pass variables to the build process in several ways:
+
 - Environment Variables
 - Manually configured in packer file 
 - Provided via CLI `-var` and `-var-file` options
 
-```
+```hcl
 variable "ibm_api_key" {
   type    = string
   default = "${env("IBMCLOUD_API_KEY")}"
@@ -44,9 +43,7 @@ variable "another_secret_one" {
 
 ### Source Blocks
 
-- The top-level source block defines reusable builder configuration blocks
-
-The first label — `ibmcloud-vpc` here — is the builder type.
+The top-level source block defines reusable builder configuration blocks. The first label — `ibmcloud-vpc` here — is the builder type.
 
 ```hcl
 source "ibmcloud-vpc" "ubuntu_base_image" {
@@ -72,10 +69,9 @@ source "ibmcloud-vpc" "ubuntu_base_image" {
 }
 ```
 
-
 ### Build Blocks
 
-- The build block defines what builders are started, how to provision them and if necessary what to do with their artifacts using post-process.
+The build block defines what builders are started, how to provision them and if necessary what to do with their artifacts using post-process.
 
 ```hcl
 build {
@@ -88,7 +84,13 @@ build {
 
 ### Provisioner Blocks
 
-- Provisioners use builtin and third-party software to install and configure the machine image after booting. Provisioners prepare the system for use:
+Provisioners use builtin and third-party software to install and configure the machine image after booting. Provisioners prepare the system for use by performing common tasks such as:
+
+- Update kernel modules
+- Add system users
+- Deploy and configure software
+
+While there are a number of `provisioners` supported by Packer, the most common are: [File](https://www.packer.io/docs/provisioners/file), [Shell](https://www.packer.io/docs/provisioners/shell), [Shell (local)](https://www.packer.io/docs/provisioners/shell-local), and [PowerShell](https://www.packer.io/docs/provisioners/powershell).
 
 ```hcl
   provisioner "file" {
@@ -110,11 +112,20 @@ build {
   }
 ```
 
-
 ## Packer Build Flow
 
-```
-Start -> Packer Build -> Create scripts -> Create Packer SSH Key for provisioner (scripts) -> Create VPC instance, run provisioners -> Stop Instance -> Create Image -> Destroy instance -> Delete Packer SSH Key -> Return volume name and ID
+When we initiate a `packer build` several things happen:
+
+- A new temporary SSH Key is created and added to the VPC Region
+- A new compute instance is created with the temporary SSH key injected
+- All `user-data` and `provisioners` are run on the instance
+- The compute instance is stopped and a new custom image template is created from the stopped machine
+
+Once the image template is marked as `available`, the compute instance and SSH keys that were created are removed from the account.
+
+```sh
+packer validate example.pkr.hcl
+packer build example.pkr.hcl
 ```
 
 ## Todo 
