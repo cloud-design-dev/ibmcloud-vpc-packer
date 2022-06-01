@@ -1,0 +1,5 @@
+- name: 'Install Monitoring Agent'
+  hosts: default
+  tasks:
+    - name: Add sysdig agent 
+      shell: curl -sL "https://ibm.biz/install-sysdig-agent" | bash -s -- -a "{{ sysdig_key }}" -c private.ingest.{{ region }}.monitoring.cloud.ibm.com --collector_port 6443 --secure true --tags "region:{{ region }},template:{{ packer_template }}"

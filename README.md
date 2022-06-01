@@ -90,7 +90,7 @@ Provisioners use builtin and third-party software to install and configure the m
 - Add system users
 - Deploy and configure software
 
-While there are a number of `provisioners` supported by Packer, the most common are: [File](https://www.packer.io/docs/provisioners/file), [Shell](https://www.packer.io/docs/provisioners/shell), [Shell (local)](https://www.packer.io/docs/provisioners/shell-local), and [PowerShell](https://www.packer.io/docs/provisioners/powershell).
+While there are a number of `provisioners` supported by Packer, the most common are: [File](https://www.packer.io/docs/provisioners/file), [Shell](https://www.packer.io/docs/provisioners/shell), [Ansible](https://www.packer.io/plugins/provisioners/ansible/ansible), and [PowerShell](https://www.packer.io/docs/provisioners/powershell).
 
 ```hcl
   provisioner "file" {
@@ -110,6 +110,13 @@ While there are a number of `provisioners` supported by Packer, the most common 
       "/opt/hashi.sh"
     ]
   }
+
+  provisioner "ansible" {
+    playbook_file    = "./monitoring.yml"
+    extra_arguments = ["--extra-vars", "packer_template=${var.logging_key}", "--extra-vars", "region=${var.ibm_region}"]
+  }
+
+
 ```
 
 ## Packer Build Flow

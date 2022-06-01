@@ -30,14 +30,30 @@ CONSULTEMPLATEDOWNLOAD="https://releases.hashicorp.com/consul-template/${CONSULT
 CONSULTEMPLATECONFIGDIR=/etc/consul-template.d
 CONSULTEMPLATEDIR=/opt/consul-template
 
+## Install and configure IBM Cloud Logging agent 
+configure_logging() {
+    echo "deb https://repo.logdna.com stable main" | tee /etc/apt/sources.list.d/logdna.list
+    wget -O- https://repo.logdna.com/logdna.gpg | apt-key add -
+    apt-get update
+    apt-get install -y logdna-agent < "/dev/null"
+    logdna-agent -k ${LOGDNA_KEY}
+    logdna-agent -s LOGDNA_APIHOST=api.${REGION}.logging.cloud.ibm.com
+    logdna-agent -s LOGDNA_LOGHOST=logs.${REGION}.logging.cloud.ibm.com
+    logdna-agent -t "template:${PACKER_TEMPLATE}"
+    update-rc.d logdna-agent defaults
+    /etc/init.d/logdna-agent start
+}
 
+configure_monitoring() {
+    curl -sL "https://ibm.biz/install-sysdig-agent" | bash -s -- -a ${MONITORING_KEY} -c private.ingest.${REGION}.monitoring.cloud.ibm.com --collector_port 6443 --secure true --tags "region:{{ region }}, template:${PACKER_TEMPLATE}"
+}
 
 install_system_packages() {
     # Install base system dependencies
     apt-get install -y software-properties-common
     apt-get update
     apt-get upgrade -qqy
-    apt-get install -y unzip tree git curl build-essential jq wget python3-apt linux-headers-$(uname -r)
+    apt-get install -y unzip tree python3-pip git curl build-essential jq wget python3-apt linux-headers-$(uname -r)
 } 
 
 # Install onsul
@@ -111,6 +127,8 @@ install_ibm_tools() {
     python3 -m pip install softlayer 
 }
 
+configure_logging
+configure_monitoring
 install_system_packages
 install_consul
 install_vault

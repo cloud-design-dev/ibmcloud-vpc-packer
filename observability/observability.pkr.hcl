@@ -13,25 +13,25 @@ variable "ibm_api_key" {
 }
 
 variable "ibm_region" {
-  type = string
+  type    = string
 }
 
 variable "logging_key" {
-  type = string
+  type    = string
 }
 
-variable "monitoring_key" {
-  type = string
+variable "sysdig_key" {
+  type    = string
 }
 
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
-  name      = "hashi-${local.timestamp}"
+  name      = "ansible-${local.timestamp}"
 }
 
-source "ibmcloud-vpc" "hashi_base_image" {
+source "ibmcloud-vpc" "ansible_image" {
   api_key = "${var.ibm_api_key}"
-  region  = "${var.ibm_region}"
+  region  = "ca-tor"
 
   subnet_id          = "02q7-0f27fd0f-e037-4b7a-9e6f-2cd138744191"
   resource_group_id  = "6b6211f1af784e62874070340ee4b6be"
@@ -53,29 +53,36 @@ source "ibmcloud-vpc" "hashi_base_image" {
 
 build {
   sources = [
-    "source.ibmcloud-vpc.hashi_base_image",
+    "source.ibmcloud-vpc.ansible_image",
   ]
 
-
-
-  provisioner "file" {
-    source      = "./hashi.sh"
-    destination = "/opt/hashi.sh"
+  provisioner "ansible" {
+    playbook_file = "./update.yml"
   }
 
-  provisioner "shell" {
-    execute_command = "{{.Vars}} bash '{{.Path}}'"
-    environment_vars = [
-      "REGION=${var.ibm_region}",
-      "LOGDNA_KEY=${var.logging_key}",
-      "MONITORING_KEY=${var.monitoring_key}",
-      "PACKER_TEMPLATE=${local.name}"
-
-    ]
-    inline = [
-      "chmod +x /opt/hashi.sh",
-      "/opt/hashi.sh"
-    ]
+  provisioner "ansible" {
+    playbook_file   = "./logging.yml"
+    extra_arguments = ["--extra-vars", "logdna_ingestion_key=${var.logging_key}", "--extra-vars", "region=${var.ibm_region}"]
   }
+
+  provisioner "ansible" {
+    playbook_file   = "./monitoring.yml"
+    extra_arguments = ["--extra-vars", "packer_template=${local.name}", "--extra-vars", "region=${var.ibm_region}", "--extra-vars", "sysdig_key=${var.sysdig_key}"]
+  }
+
+  post-processor "manifest" {
+    output     = "manifest.json"
+    strip_path = true
+  }
+
+
 }
+
+
+
+
+
+
+
+
 

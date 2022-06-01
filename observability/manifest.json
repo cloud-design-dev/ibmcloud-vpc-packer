@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "name": "ansible_image",
+      "builder_type": "ibmcloud-vpc",
+      "build_time": 1654104081,
+      "files": null,
+      "artifact_id": "r038-8a7624e5-11c8-48b7-b386-720dd4ceebeb",
+      "packer_run_uuid": "f211e518-5684-709d-8f2a-6751c1be669c",
+      "custom_data": null
+    }
+  ],
+  "last_run_uuid": "f211e518-5684-709d-8f2a-6751c1be669c"
+}

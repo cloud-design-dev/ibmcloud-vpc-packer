@@ -2,7 +2,7 @@
 packer_cache/
 terraform/*.tfplan
 terraform/.terraform
-terraform/*.tfstate
+terraform/*.tfstate*
 
 # Crash log
 crash.log
