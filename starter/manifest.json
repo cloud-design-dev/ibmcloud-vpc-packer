@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "name": "starter",
+      "builder_type": "ibmcloud-vpc",
+      "build_time": 1654144650,
+      "files": null,
+      "artifact_id": "r038-ed2e18fa-06e6-4c4c-a6e5-096c3993502a",
+      "packer_run_uuid": "5b93d579-e4a6-3ef7-5575-6c8e3c893bef",
+      "custom_data": null
+    }
+  ],
+  "last_run_uuid": "5b93d579-e4a6-3ef7-5575-6c8e3c893bef"
+}

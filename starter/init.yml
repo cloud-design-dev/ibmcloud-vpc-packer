@@ -1,0 +1,21 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+users:
+  - name: ryan
+    groups: [ sudo ]
+    sudo: [ "ALL=(ALL) NOPASSWD:ALL" ]
+    shell: /bin/bash
+    ssh-authorized-keys:
+    - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDSWes187pVlIxtp+bCI5ci1Zzn1A1GABqPKETyaztu29CIYf5XkkP5n8XzP/8n7NgeU0+/Z/izJvnT0HBEDin7VUMZTLJL9ERXaZ5KRwTAnQOx1DsueQgCI9/ZBahDeDVE2hvvbh/DCgCdD0o6SagVfOB9bO7/NJlZNwXSV5Xc84sWY4xgc0voLpNF8K648IsWGY27XbwHuVbb7blR6BKZd7ETf+DXMTEIdZr3YQ79bm+371T2LPtqsc0xYUHMXVCw8vyS0E6OeQxppmVLaR4NycXcW6/gj2aDGS6gHx0DMUA2pB3Snw/DK7FZ14fBZWw66wHkejWeR7pXfw1sqGaUUbVH66FwCGiKAZzm0pzneLVTaSUPg8KDtImREWW1EE7nadGDW/AHpRWVlc1cEqTvPqt1qmhut+AEnFTrQ1g9f4kh5cr3JzHXGUiAuzCZa9swQcEO8mEuWFUbzK82OxPqt00wMz567HkX1gVfHHMWcgJYYo99BR/DMKT3Xp4ULLNC5pTw5c5gBNan6SvhDVFIfibCmQh6Z9vBu7cgfpxliAOXN1B+4DSxuvjuDGYHEguNni4lDcN6MWnwQsvbpMOQGFr4vS89R0drf6LpkcQlbxKsJFgE6sJIXjkToQaEYf/4ieyUjjPmU8NkQFWx04USKpyQ2h7KtadsbzChk+bp1Q== ryan@europa'
+    - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCilMVokeYbySGn4XLfxz2t9NBonRrfMtnEWQZAxwVaKO1fN1xsOjzQ+z2dIfozr2/MRexPS7uE+nezQtJAlvw/sW92O6AKV8hkwdxQojR9UQ6T/5Sd7dWaiuaFcHhNlqAoJaKvx8Y0fA2i+rxdKMPux+mw7SoY+SgH58HNIwGHigAdziFNpGfKms7bzPULI++aPfc0MV3rLdDyWKiejRd87s7MFcJSqkt+KDqSXVozKeF9L9C70ryTAIsBK0eM2y4viqy+NX+4P6MXE8kwBihTtfY1yr9s+0Ypc99/BhuhpZEwQORHQcRaUzNJ41OuemE8+cE5XQcWpzse+GPk7Cv0/+Rkh4H11ogYNjUqHFmjG0/kmwyq39ZNuMIVk5SZl66rgqcdGRJ6yOHBTSFYr68bJmuHOG96U7np/yIW6BZxlxuEuWjko5vYrMlDAzA+/kuuVuhorIe8KXadU56oXWYj4uIynlu9U3KQJBlJxn/FWI4xMooY/VS1Q0l7bHNe49U8DqeFlOKIXCDg4JoShDODDG2+MSmAmqdLnClALBk1ZJC/QeaIsyPzGxjuCObHDGfk/dYwkRIZ2H5DjUDMtnkDQwe8biNtNOlXx15UoiBmOzkfqfFkhekOtC/mzEKMAQUCOBYJbWdMQp0eaHjlUS6nHsojwaPGr6P0g1/DV2pwRw== ryan@dreadnought'
+    - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGps4bNYLE9NitCKsZuSEk7OUli7EBs/BvTHXgAKN6Ec9/BqVHBcbvhBRmGaRi5cvVYu5qo4zSegMlcAfqZ2mijI3vm9GQi+0RkvvIMWO5j2MmRaaTjjOAZRSvPvKNhOJ1O47OCYSr1hozW+7l4zVPUPw4rqugQETBb2nU2CXnY2naCll+T/JE+vkAswICSZl1PJwkUyxyGRIsey1m3VPSlYHVAhKAYDXpWgvI7QHE7m+dydroZNzgdBdQ93KgL3k/wU7OwJVy4WR1lOTcg4yN3Lsb1zUsUg8EgAwaW9ytl9OlVdId04yM1t4iTaBQ63aO/OKD+2fQWILPtJjasWap ryan@tycho.local'
+packages:
+    - git
+    - curl
+    - build-essential
+    - jq
+    - wget
+    - python3-apt
+final_message: "The system is finally up, after $UPTIME seconds"
+output: {all: '| tee -a /var/log/cloud-init-output.log'}
