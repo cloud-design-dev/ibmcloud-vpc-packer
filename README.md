@@ -6,16 +6,16 @@
 
 ## Mutable vs Immutable infrastructure
 
-In traditional deployment scenarios, our developers write some code, our ops team deploys the needed infrastructure, and then has to:
+In traditional deployment scenarios the workflow looks like this:
+
+![Traditional flow](images/traditional-flow.png)
+
+Our developers write some code, our ops team deploys the needed infrastructure, and then has to:
 
 - Patch the kernel
 - Add system packages or third party binaries
 - Add users and set up group-level access
 - Copy application code to the server
-
-The workflow looks like this:
-
-![Traditional flow](images/traditional-flow.png)
 
 With Packer we can swap those last 2 actions so that the machines we provision are up-to-date, pre-baked, and ready for production.  
 

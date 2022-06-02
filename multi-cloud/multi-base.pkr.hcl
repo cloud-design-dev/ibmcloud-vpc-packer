@@ -4,38 +4,80 @@ packer {
       version = ">=v2.2.0"
       source  = "github.com/IBM/ibmcloud"
     }
+    digitalocean = {
+      version = ">= 1.0.0"
+      source  = "github.com/hashicorp/digitalocean"
+    }
   }
 }
 
 variable "ibm_api_key" {
-  type = string
+  description = "IBM Cloud API key."
+  type        = string
 }
 
 variable "ibm_region" {
-  type = string
+  description = "IBM Cloud Region where image will be created."
+  type        = string
+}
+
+variable "do_api_token" {
+  description = "Digital Ocean API Token."
+  type        = string
+}
+
+variable "linode_token" {
+  description = "Linode API Token."
+  type        = string
 }
 
 variable "logging_key" {
-  type = string
+  description = "IBM Cloud Logging Agent Key."
+  type        = string
 }
 
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+  name      = "packer-${local.timestamp}"
 }
 
-source "ibmcloud-vpc" "ubuntu_base_image" {
+source "linode" "ubuntu_20" {
+  image             = "linode/ubuntu20.04"
+  image_description = "linode-ubuntu-${local.timestamp} image"
+  image_label       = "linode-ubuntu-${local.timestamp}"
+  instance_label    = "l-${local.name}"
+  instance_type     = "g6-nanode-1"
+  linode_token      = "${var.linode_token}"
+  region            = "us-east"
+  ssh_username      = "root"
+}
+
+source "digitalocean" "ubuntu_20" {
+  api_token      = "${var.do_api_token}"
+  image          = "ubuntu-20-04-x64"
+  snapshot_name  = "d-${local.name}"
+  region         = "nyc3"
+  size           = "s-1vcpu-2gb"
+  communicator   = "ssh"
+  ssh_username   = "root"
+  ssh_port       = 22
+  ssh_timeout    = "15m"
+  user_data_file = "init.yml"
+}
+
+source "ibmcloud-vpc" "ubuntu_20" {
   api_key = "${var.ibm_api_key}"
   region  = "${var.ibm_region}"
 
   subnet_id          = "02q7-0f27fd0f-e037-4b7a-9e6f-2cd138744191"
   resource_group_id  = "6b6211f1af784e62874070340ee4b6be"
   security_group_id  = "r038-be438e0d-6bb1-41ee-8016-5e5ba2d53bef"
-  vsi_base_image_id  = "r038-83d9d391-4449-4037-b64f-fdb642c2786c"
+  vsi_base_image_id  = "r038-6955ded7-4d13-40a8-b318-26d9323b12e3"
   vsi_profile        = "cx2-2x4"
   vsi_interface      = "public"
   vsi_user_data_file = "init.yml"
 
-  image_name = "rt-ubuntu-${local.timestamp}"
+  image_name = "i-${local.name}"
 
   communicator = "ssh"
   ssh_username = "root"
@@ -43,81 +85,22 @@ source "ibmcloud-vpc" "ubuntu_base_image" {
   ssh_timeout  = "15m"
 
   timeout = "30m"
-}
-
-source "ibmcloud-vpc" "rocky_base_image" {
-  api_key = "${var.ibm_api_key}"
-  region  = "${var.ibm_region}"
-
-  subnet_id          = "02q7-0f27fd0f-e037-4b7a-9e6f-2cd138744191"
-  resource_group_id  = "6b6211f1af784e62874070340ee4b6be"
-  security_group_id  = "r038-be438e0d-6bb1-41ee-8016-5e5ba2d53bef"
-  vsi_base_image_id  = "r038-6c63d322-aa63-4f27-8c61-3133262bebdf"
-  vsi_profile        = "cx2-2x4"
-  vsi_interface      = "public"
-  vsi_user_data_file = ""
-
-  image_name   = "rt-rocky-${local.timestamp}"
-  communicator = "ssh"
-  ssh_username = "root"
-  ssh_port     = 22
-  ssh_timeout  = "15m"
-
-  timeout = "30m"
-
-}
-
-source "ibmcloud-vpc" "debian_base_image" {
-  api_key = "${var.ibm_api_key}"
-  region  = "${var.ibm_region}"
-
-  subnet_id          = "02q7-0f27fd0f-e037-4b7a-9e6f-2cd138744191"
-  resource_group_id  = "6b6211f1af784e62874070340ee4b6be"
-  security_group_id  = "r038-be438e0d-6bb1-41ee-8016-5e5ba2d53bef"
-  vsi_base_image_id  = "r038-e4a8030c-4b16-48d5-bb36-b3ee0b032b01"
-  vsi_profile        = "cx2-2x4"
-  vsi_interface      = "public"
-  vsi_user_data_file = ""
-
-  image_name   = "rt-debian-${local.timestamp}"
-  communicator = "ssh"
-  ssh_username = "root"
-  ssh_port     = 22
-  ssh_timeout  = "15m"
-
-  timeout = "30m"
-
 }
 
 build {
-  name = "vpc-packer-builder"
   sources = [
-    "source.ibmcloud-vpc.ubuntu_base_image",
-    "source.ibmcloud-vpc.rocky_base_image",
-    "source.ibmcloud-vpc.debian_base_image"
+    "source.ibmcloud-vpc.ubuntu_20",
+    "source.linode.ubuntu_20",
+    "source.digitalocean.ubuntu_20",
   ]
 
-  provisioner "file" {
-    only        = ["ibmcloud-vpc.rocky_base_image"]
-    source      = "./rpm-test.sh"
-    destination = "/opt/test.sh"
+  provisioner "ansible" {
+    playbook_file = "./playbooks/update.yml"
   }
 
-  provisioner "file" {
-    except      = ["ibmcloud-vpc.rocky_base_image"]
-    source      = "./deb-test.sh"
-    destination = "/opt/test.sh"
-  }
-
-  provisioner "shell" {
-    execute_command = "{{.Vars}} bash '{{.Path}}'"
-    environment_vars = [
-      "REGION=${var.ibm_region}"
-    ]
-    inline = [
-      "chmod +x /opt/test.sh",
-      "/opt/test.sh"
-    ]
+  provisioner "ansible" {
+    playbook_file   = "./playbooks/logging.yml"
+    extra_arguments = ["--extra-vars", "logdna_ingestion_key=${var.logging_key}", "--extra-vars", "region=${var.ibm_region}"]
   }
 
 }

@@ -1,12 +1,12 @@
-variable "ubuntu_image" {
+variable "ibm_image" {
   default = ""
 }
 
-variable "rocky_image" {
+variable "do_image" {
   default = ""
 }
 
-variable "debian_image" {
+variable "linode_image" {
   default = ""
 }
 

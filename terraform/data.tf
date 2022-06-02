@@ -1,16 +1,15 @@
-data "ibm_is_image" "ubuntu_base" {
-  name       = var.ubuntu_image
+data "ibm_is_image" "packer" {
+  name       = var.ibm_image
   visibility = "private"
 }
 
-data "ibm_is_image" "rocky_base" {
-  name       = var.rocky_image
-  visibility = "private"
-}
+# data "linode_image" "packer" {
+#   id = var.linode_image
+# }
 
-data "ibm_is_image" "debian_base" {
-  name       = var.debian_image
-  visibility = "private"
+data "digitalocean_image" "packer" {
+  name   = var.do_image
+  source = "user"
 }
 
 data "ibm_is_vpc" "tor_lab" {
@@ -29,7 +28,14 @@ data "ibm_is_security_group" "backend_sg" {
   name = var.instance_security_group
 }
 
-data "ibm_is_ssh_key" "regional" {
+data "ibm_is_ssh_key" "europa" {
   name = var.ssh_key
 }
 
+data "linode_sshkey" "europa" {
+  label = "ryan_europa"
+}
+
+data "digitalocean_ssh_key" "europa" {
+  name = "ryan@europa"
+}

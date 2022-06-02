@@ -1,35 +1,23 @@
-resource "ibm_is_instance" "rocky" {
-  name                     = "rocky-packer-instance"
-  image                    = data.ibm_is_image.rocky_base.id
-  profile                  = "cx2-2x4"
-  metadata_service_enabled = true
-  resource_group           = data.ibm_resource_group.cde_lab.id
-
-  boot_volume {
-    name = "rocky-packer-boot-volume"
-  }
-
-  primary_network_interface {
-    subnet            = data.ibm_is_subnet.backend_subnet.id
-    security_groups   = [data.ibm_is_security_group.backend_sg.id]
-    allow_ip_spoofing = false
-  }
-
-  vpc  = data.ibm_is_vpc.tor_lab.id
-  zone = "ca-tor-1"
-  keys = [data.ibm_is_ssh_key.regional.id]
-  tags = ["owner:ryantiffany"]
+resource "linode_instance" "ubuntu" {
+  label           = "linode-u20-packer"
+  image           =  var.linode_image
+  region          = "us-central"
+  type            = "g6-standard-1"
+  authorized_keys = [data.linode_sshkey.europa.ssh_key]
+  tags            = ["owner:ryantiffany", "packer_template_test"]
+  swap_size       = 256
+  private_ip      = true
 }
 
 resource "ibm_is_instance" "ubuntu" {
-  name                     = "ubuntu-packer-instance"
-  image                    = data.ibm_is_image.ubuntu_base.id
+  name                     = "ibm-u20-packer"
+  image                    = data.ibm_is_image.packer.id
   profile                  = "cx2-2x4"
   metadata_service_enabled = true
   resource_group           = data.ibm_resource_group.cde_lab.id
 
   boot_volume {
-    name = "ubuntu-packer-boot-volume"
+    name = "ibm-u20-boot-volume"
   }
 
   primary_network_interface {
@@ -38,30 +26,19 @@ resource "ibm_is_instance" "ubuntu" {
     allow_ip_spoofing = false
   }
 
+  user_data = file("./ibm.sh")
   vpc  = data.ibm_is_vpc.tor_lab.id
   zone = "ca-tor-1"
-  keys = [data.ibm_is_ssh_key.regional.id]
-  tags = ["owner:ryantiffany"]
+  keys = [data.ibm_is_ssh_key.europa.id]
+  tags = ["owner:ryantiffany", "packer_template_test"]
 }
-resource "ibm_is_instance" "debian" {
-  name                     = "debian-packer-instance"
-  image                    = data.ibm_is_image.debian_base.id
-  profile                  = "cx2-2x4"
-  metadata_service_enabled = true
-  resource_group           = data.ibm_resource_group.cde_lab.id
 
-  boot_volume {
-    name = "debian-packer-boot-volume"
-  }
-
-  primary_network_interface {
-    subnet            = data.ibm_is_subnet.backend_subnet.id
-    security_groups   = [data.ibm_is_security_group.backend_sg.id]
-    allow_ip_spoofing = false
-  }
-
-  vpc  = data.ibm_is_vpc.tor_lab.id
-  zone = "ca-tor-1"
-  keys = [data.ibm_is_ssh_key.regional.id]
-  tags = ["owner:ryantiffany"]
+resource "digitalocean_droplet" "ubuntu" {
+  image    = data.digitalocean_image.packer.id
+  name     = "do-u20"
+  region   = "nyc3"
+  size     = "s-1vcpu-2gb"
+  ssh_keys = [data.digitalocean_ssh_key.europa.id]
+  tags     = ["owner:ryantiffany", "packer_template_test"]
+  user_data = file("./do.sh")
 }
