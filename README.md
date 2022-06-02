@@ -17,6 +17,8 @@ Our developers write some code, our ops team deploys the needed infrastructure, 
 - Add users and set up group-level access
 - Copy application code to the server
 
+While this is not necessarily a big deal for smaller deployments or in-house projects, larger deployments tend to suffer from both configuration drift, as well as outdated/vulnerable packages. Tools like Ansible, Salt, Chef, etc can fill the gap here, but now you are introducing another layer, possibly more overhead, and you need good centralized code for all of the possible tasks you want to run against your infrastructure.
+
 With Packer we can swap those last 2 actions so that the machines we provision are up-to-date, pre-baked, and ready for production.  
 
 ![Packer flow](images/packer-flow.png)
