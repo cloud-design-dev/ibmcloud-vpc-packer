@@ -13,20 +13,19 @@ In traditional deployment scenarios, our developers write some code, our ops tea
 - Add users and set up group-level access
 - Copy application code to the server
 
-(develop -> deploy -> configure)
+The workflow looks like this:
 
-Since the machine was changed after it was provisioned, we consider it to be mutable, it has been `mutated` from the base line.
-
-(blurb here about pushing configs to all the machines, config drift, inconsistent patching)
+![Traditional flow](images/traditional-flow.png)
 
 With Packer we can swap those last 2 actions so that the machines we provision are up-to-date, pre-baked, and ready for production.  
 
-(develop -> configure -> deploy)
+![Packer flow](images/packer-flow.png)
 
 ## The Packer Template
 
 A Packer template is split in to many configuration `blocks` that determine how the machine image is created.
 
+![Packer template overview](images/packer-config.png)
 
 ### Packer block
 
