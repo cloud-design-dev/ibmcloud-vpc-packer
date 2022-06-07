@@ -17,5 +17,6 @@ packages:
     - jq
     - wget
     - python3-apt
+    - python3-pip
 final_message: "The system is finally up, after $UPTIME seconds"
-output: {all: '| tee -a /var/log/cloud-init-output.log'}
+output: {all: '| tee -a /var/log/cloud-init-output.log'}#cloud-config

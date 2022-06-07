@@ -1,0 +1,8 @@
+name = ""
+base_image = ""
+lab_vpc = ""
+instance_subnet = ""
+instance_security_group = ""
+resource_group = ""
+ssh_key = ""
+region = ""

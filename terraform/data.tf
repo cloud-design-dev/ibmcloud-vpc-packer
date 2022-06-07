@@ -3,10 +3,6 @@ data "ibm_is_image" "packer" {
   visibility = "private"
 }
 
-# data "linode_image" "packer" {
-#   id = var.linode_image
-# }
-
 data "digitalocean_image" "packer" {
   name   = var.do_image
   source = "user"

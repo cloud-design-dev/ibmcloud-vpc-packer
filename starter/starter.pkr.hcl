@@ -53,7 +53,7 @@ build {
 
   provisioner "shell-local" {
     execute_command = ["bash", "-c", "{{.Vars}} {{.Script}}"]
-    inline = ["echo '${build.SSHPrivateKey}'"]
+    inline          = ["echo '${build.SSHPrivateKey}'"]
   }
 
   post-processor "manifest" {

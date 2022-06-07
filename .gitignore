@@ -4,6 +4,7 @@ terraform/*.tfplan
 terraform/.terraform
 terraform/*.tfstate*
 *.bike
+starter/manifest.json
 
 # Crash log
 crash.log

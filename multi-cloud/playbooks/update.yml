@@ -2,9 +2,6 @@
 # playbook.yml
 - name: 'Update deployed machines'
   hosts: default
-  vars:
-    LOGDNA_KEY: "{{ LOGDNA_KEY }}"
-
   tasks:
     - name: Update yum packages 
       yum: name=* state=latest

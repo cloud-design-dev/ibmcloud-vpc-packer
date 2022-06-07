@@ -47,7 +47,7 @@
     - name: set logdna-agent api endpoint 
       shell: logdna-agent -s "LOGDNA_APIHOST=api.{{ region }}.logging.cloud.ibm.com"
     - name: set logdna-agent logging endpoint 
-      shell: logdna-agent -s "LOGDNA_LOGHOST=private.logs.{{ region }}.logging.cloud.ibm.com"
+      shell: logdna-agent -s "LOGDNA_LOGHOST=logs.{{ region }}.logging.cloud.ibm.com"
     - name: set logdna-agent tags
       shell: logdna-agent -t "packer_template_test"
     - name: enable service at start up 
