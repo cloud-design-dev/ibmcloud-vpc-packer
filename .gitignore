@@ -19,3 +19,5 @@ crash.log
 
 # For built boxes
 *.box
+images/.DS_Store
+.DS_Store
