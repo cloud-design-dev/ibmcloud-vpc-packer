@@ -1,0 +1,15 @@
+# IBM Cloud API Key 
+ibmcloud_api_key = ""
+
+# Name to prepend to all deployed resources 
+name = ""
+
+# Name of the Resource Group to use for deployed resources
+resource_group = ""
+
+# Name of an existing SSH Key to inject in to Warpseed server
+existing_ssh_key = ""
+
+# IBM Cloud region where VPC will be deployed. Example: us-south
+region = ""
+
