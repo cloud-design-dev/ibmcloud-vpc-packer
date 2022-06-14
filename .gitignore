@@ -1,4 +1,5 @@
 # Cache objects
+*cloud-init-test/*
 packer_cache/
 terraform/*.tfplan
 terraform/.terraform
